@@ -3,39 +3,45 @@
 /*
  * main.c
  */
-int THRESHOLD = 0x0200;		// Threshold voltage for wall prescence (2.5v)
+int THRESHOLDLEFT = 0x3B0;		// Threshold voltage for wall prescence
+int THRESHOLDRIGHT = 0x120;
+int THRESHOLDCENTER = 0x3D0;
 void main(void) {
     WDTCTL = WDTPW | WDTHOLD;				  // Stop watchdog timer
     ADC10CTL0 = ADC10SHT_3 + ADC10ON; 		  // 64 ADC clks to combat loading, ADC10ON
     ADC10AE0 |= BIT1 + BIT2 + BIT4;           // P1.1, P1.2, P1.4 to ADC mode (A1,A2,A4)
     ADC10CTL1 |= ADC10SSEL1|ADC10SSEL0;       // Select SMCLK
-    P1DIR |= 0x01 + 0x08;                     // Set P1.0, P1.3 to output direction
+    P1DIR = BIT0 + BIT6;
+    P1OUT &= ~BIT0;
+    P1OUT &= ~BIT6;
 
     for (;;) {
     	ADC10CTL1 = INCH_1;				// Left receiver A1
     	ADC10CTL0 |= ENC + ADC10SC;     // Sampling and conversion start
-    	if (ADC10MEM < THRESHOLD) {		// Wall not close
-    		P1OUT &= ~0x01;             // P1.0 LED off
+    	if (ADC10MEM < THRESHOLDLEFT) {		// Wall not close (less V when wall close)
+    		P1OUT |= BIT0;             // P1.0 LED off
     	} else {						// Wall close
-    		P1OUT |= 0x01;              // P1.0 LED on
+    		P1OUT &= ~BIT0;              // P1.0 LED on
     	}
+    	ADC10CTL0 &= ~ENC;
 
-    	ADC10CTL1 = INCH_2;				// Right receiver A2
+    	ADC10CTL1 = INCH_4;				// Right receiver A4
     	ADC10CTL0 |= ENC + ADC10SC;
-    	if (ADC10MEM < THRESHOLD) {
-    		P1OUT &= ~0x08;             // P1.3 LED off
+    	if (ADC10MEM > THRESHOLDRIGHT) {	// Wall not close (more V when wall close)
+    		P1OUT |= BIT6;             // P1.3 LED off
     	} else {
-    		P1OUT |= 0x08;              // P1.3 LED on
+    		P1OUT &= ~BIT6;              // P1.3 LED on
     	}
+    	ADC10CTL0 &= ~ENC;
 
-    	ADC10CTL1 = INCH_4;				// Center receiver A4
+    	ADC10CTL1 = INCH_2;				// Center receiver A2
     	ADC10CTL0 |= ENC + ADC10SC;
-    	if (ADC10MEM < THRESHOLD) {
-    		P1OUT &= ~0x01;				// Both off
-    		P1OUT &= ~0x08;
+    	if (ADC10MEM < THRESHOLDCENTER) {
+    		P1OUT |= BIT0 + BIT6;				// Both off
     	} else {
-    		P1OUT |= 0x01;				// Both on
-    		P1OUT |= 0X08;
-     }
+    		P1OUT &= ~BIT0 + ~BIT6;				// Both on
+    	}
+    	ADC10CTL0 &= ~ENC;
+
    }
 }
