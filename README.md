@@ -18,6 +18,14 @@ The goal of the lab was to use the three IR sensor/receiver pairs on the bot to 
 ![alt text](https://raw.githubusercontent.com/SeanGavan/382-Lab-7/master/Images/Schematic.PNG "Schematic")
 ## Well-formatted code
 ```
+/***
+ * Sean Gavan
+ * 8 Dec. 14
+ * Lab 7 -- Detecting walls with IR sensors
+ * For this lab we were to use the IR transmitter/receiver pairs to detect when obstacles were near the bot.
+ * Documentation: I asked Capt. Trimble on multiple occassion how to fix some issues with the green LED
+ * always staying on.
+ */
 #include <msp430.h> 
 
 /*
@@ -36,30 +44,32 @@ void main(void) {
 
     for (;;) {
     	ADC10CTL1 = INCH_4;				// Right receiver A4
-    	ADC10CTL0 |= ENC + ADC10SC;   // Sampling and conversion start
+    	ADC10CTL0 |= ENC + ADC10SC;
     	__bis_SR_register(CPUOFF + GIE);        // LPM0, ADC10_ISR will force exit
-     	if (ADC10MEM > THRESHOLDRIGHT) {  // If wall is close
-         	P1OUT |= BIT6;				// P1.6 on
+    	if (ADC10MEM > THRESHOLDRIGHT) {
+        	P1OUT |= BIT6;				// P1.6 on
      	} else {
      		P1OUT &= ~BIT6;				// P1.6 off
      	}
 
     	ADC10CTL1 = INCH_1;				// Left receiver A1
-    	ADC10CTL0 |= ENC + ADC10SC;     
-    	 __bis_SR_register(CPUOFF + GIE);        
-    	if (ADC10MEM < THRESHOLDLEFT) {		// Wall close (less V when wall is close)
+    	ADC10CTL0 |= ENC + ADC10SC;     // Sampling and conversion start
+    	 __bis_SR_register(CPUOFF + GIE);        // LPM0, ADC10_ISR will force exit
+    	if (ADC10MEM < THRESHOLDLEFT) {		// Wall close (less V when wall close)
     		P1OUT |= BIT0;             // P1.0 LED on
+    		P1OUT &= ~BIT6;
     	} else {						// Wall close
     		P1OUT &= ~BIT0;              // P1.0 LED off
+    		P1OUT &= ~BIT6;
     	}
 
     	ADC10CTL1 = INCH_2;				// Center receiver A2
     	ADC10CTL0 |= ENC + ADC10SC;
-    	 __bis_SR_register(CPUOFF + GIE);       
-    	if (ADC10MEM < THRESHOLDCENTER) { // Also less V when wall is close
+    	 __bis_SR_register(CPUOFF + GIE);        // LPM0, ADC10_ISR will force exit
+    	if (ADC10MEM < THRESHOLDCENTER) {
     		P1OUT |= BIT0 + BIT6;				// Both on
     	} else {
-    		P1OUT &= ~(BIT0 + BIT6);				// Both off
+    		P1OUT &= ~(BIT0 + BIT6);			// Both off
     	}
    }
 }
@@ -68,7 +78,7 @@ void main(void) {
 #pragma vector=ADC10_VECTOR
 __interrupt void ADC10_ISR(void)
 {
-	ADC10CTL0 &= ~ENC;        // Stop samping
+	ADC10CTL0 &= ~ENC;
   __bic_SR_register_on_exit(CPUOFF);        // Clear CPUOFF bit from 0(SR)
 }
 ```
