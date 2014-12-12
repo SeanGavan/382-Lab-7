@@ -78,7 +78,7 @@ __interrupt void ADC10_ISR(void)
 ## Testing methodology
 Ran the program through the debugger to see how `ADC10MEM` would change - found that the center and left receivers would read a lower voltage as an object got closer as opposed to the higher-voltage-if-a-wall-is-closer idea. Right receiver worked normally. This also changed the threshold values since each receiver was different. I had to find the base line voltages and then the voltages for when a wall was close to each receiver. This resulted in the threshold constants in the above code.  
 
-## Observations and Conclusions
-
+## Observations
+From the lab, I've been able to see how useful an analog-to-digital conversion system can be. Being able to sense where walls are, in this case, can be a small part in an even greater project. This will be especially helpful in Lab 8, where this system, in conjunction with the motors, will guide the bot through a maze
 ## Documentation
 I used the class notes as a template for coding the ADC10 on the MSP430.
