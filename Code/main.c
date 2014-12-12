@@ -1,3 +1,11 @@
+/***
+ * Sean Gavan
+ * 8 Dec. 14
+ * Lab 7 -- Detecting walls with IR sensors
+ * For this lab we were to use the IR transmitter/receiver pairs to detect when obstacles were near the bot.
+ * Documentation: I asked Capt. Trimble on multiple occassion how to fix some issues with the green LED
+ * always staying on.
+ */
 #include <msp430.h> 
 
 /*
@@ -18,8 +26,8 @@ void main(void) {
     	ADC10CTL1 = INCH_4;				// Right receiver A4
     	ADC10CTL0 |= ENC + ADC10SC;
     	__bis_SR_register(CPUOFF + GIE);        // LPM0, ADC10_ISR will force exit
-     	if (ADC10MEM > THRESHOLDRIGHT) {
-         	P1OUT |= BIT6;				// P1.6 on
+    	if (ADC10MEM > THRESHOLDRIGHT) {
+        	P1OUT |= BIT6;				// P1.6 on
      	} else {
      		P1OUT &= ~BIT6;				// P1.6 off
      	}
@@ -41,7 +49,7 @@ void main(void) {
     	if (ADC10MEM < THRESHOLDCENTER) {
     		P1OUT |= BIT0 + BIT6;				// Both on
     	} else {
-    		P1OUT &= ~(BIT0 + BIT6);				// Both off
+    		P1OUT &= ~(BIT0 + BIT6);			// Both off
     	}
    }
 }
