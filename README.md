@@ -4,10 +4,18 @@ The goal of the lab was to use the three IR sensor/receiver pairs on the bot to 
 ## Preliminary design
 ![alt text](https://raw.githubusercontent.com/SeanGavan/382-Lab-7/master/Images/Prelab1.PNG "Prelab 1")
 ![alt text](https://raw.githubusercontent.com/SeanGavan/382-Lab-7/master/Images/Prelab2.PNG "Prelab 2")
-## Software flow chart / algorithms
-
+## Software flow chart
+1) Define Threshold constants
+2) Setup ADC10 on the MSP430 (main)
+3) Establish LED's as output (main)
+4) Sample ADC10 input channel (for loop)
+5) Convert reading to a voltage (for loop)
+6) Compare voltage to threshold for respective side (for loop)
+7) Turn LED on or off (if statement)
+8) Repeat for each channel (for loop)
+9) Infinite for loop (4 to 9)
 ## Hardware schematic
-
+![alt text](https://raw.githubusercontent.com/SeanGavan/382-Lab-7/master/Images/Schematic.PNG "Schematic")
 ## Well-formatted code
 ```
 #include <msp430.h> 
